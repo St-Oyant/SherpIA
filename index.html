@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a2151">
+<title>SherpIA 🦙</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#12142e; --bg2:#1a2151; --card:#222653; --card2:#2b3066;
+  --accent:#9c7bff; --accent2:#7c4dff; --cyan:#4dd0e1;
+  --txt:#eceafe; --muted:#a5a3c8; --ok:#4caf7d; --ko:#e05c6e;
+  --gold:#ffca55; --lock:#5b5e86;
+  --grad:linear-gradient(160deg,#1a2151 0%,#4527a0 55%,#7b1fa2 100%);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.45;}
+body{min-height:100vh;overscroll-behavior-y:contain;}
+#app{max-width:560px;margin:0 auto;padding:0 14px calc(30px + env(safe-area-inset-bottom));}
+h1,h2,h3{line-height:1.25;}
+button{font-family:inherit;}
+.hdr{background:var(--grad);margin:0 -14px;padding:calc(14px + env(safe-area-inset-top)) 18px 14px;
+  border-radius:0 0 22px 22px;box-shadow:0 4px 18px rgba(0,0,0,.35);}
+.hdr-row{display:flex;align-items:center;gap:12px;}
+.hdr .lama{font-size:38px;}
+.hdr .t{flex:1;}
+.hdr .t b{font-size:22px;letter-spacing:.5px;}
+.hdr .t small{display:block;color:#d5ccf5;font-size:12.5px;}
+.pill{background:rgba(255,255,255,.16);border-radius:999px;padding:5px 12px;font-size:13.5px;
+  font-weight:600;white-space:nowrap;}
+.hdr-stats{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.hdr-stats .pill{cursor:pointer;border:none;color:var(--txt);}
+.bar{height:7px;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden;margin-top:10px;}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--gold));border-radius:99px;transition:width .5s;}
+.section-t{margin:22px 2px 10px;font-size:13px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:700;}
+.card{background:var(--card);border-radius:16px;padding:15px 16px;margin-bottom:11px;
+  border:1px solid rgba(255,255,255,.06);box-shadow:0 2px 8px rgba(0,0,0,.22);}
+.chap{display:flex;gap:13px;align-items:center;cursor:pointer;transition:transform .12s;}
+.chap:active{transform:scale(.98);}
+.chap .ic{font-size:30px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;
+  background:var(--card2);border-radius:14px;flex-shrink:0;}
+.chap .inf{flex:1;min-width:0;}
+.chap .inf b{display:block;font-size:16.5px;}
+.chap .inf small{color:var(--muted);font-size:13px;display:block;margin-top:2px;}
+.chap.soon{opacity:.55;cursor:default;}
+.chap .minibar{height:5px;background:#383d74;border-radius:99px;margin-top:7px;overflow:hidden;}
+.chap .minibar i{display:block;height:100%;background:var(--accent);border-radius:99px;}
+.badge{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:99px;flex-shrink:0;}
+.badge.open{background:rgba(156,123,255,.2);color:var(--accent);}
+.badge.soon{background:rgba(91,94,134,.3);color:var(--lock);}
+.badge.done{background:rgba(76,175,125,.18);color:var(--ok);}
+.lesson{display:flex;gap:12px;align-items:center;}
+.lesson .num{width:40px;height:40px;border-radius:12px;background:var(--card2);display:flex;
+  align-items:center;justify-content:center;font-weight:800;color:var(--accent);flex-shrink:0;font-size:15px;}
+.lesson.locked .num{color:var(--lock);}
+.lesson.locked{opacity:.55;}
+.lesson .inf{flex:1;min-width:0;}
+.lesson .inf b{font-size:15.5px;display:block;}
+.lesson .stars{color:var(--gold);font-size:13.5px;letter-spacing:1px;}
+.lesson .info-btn{background:var(--card2);border:none;color:var(--cyan);width:34px;height:34px;
+  border-radius:99px;font-size:16px;cursor:pointer;flex-shrink:0;}
+.btn{display:block;width:100%;background:linear-gradient(120deg,var(--accent2),#9430c9);color:#fff;
+  border:none;border-radius:14px;padding:15px;font-size:16.5px;font-weight:700;cursor:pointer;
+  margin-top:14px;box-shadow:0 4px 14px rgba(124,77,255,.35);transition:transform .1s;}
+.btn:active{transform:scale(.97);}
+.btn.sec{background:var(--card2);box-shadow:none;color:var(--txt);}
+.btn.ghost{background:none;border:1.5px solid var(--card2);box-shadow:none;color:var(--muted);}
+.btn:disabled{opacity:.45;}
+.back{background:none;border:none;color:var(--muted);font-size:15px;padding:14px 2px 4px;cursor:pointer;}
+/* Fiches */
+.fiche-wrap{position:relative;overflow:hidden;margin-top:8px;touch-action:pan-y;}
+.fiche{background:var(--card);border-radius:18px;padding:20px;border:1px solid rgba(255,255,255,.07);
+  min-height:290px;display:flex;flex-direction:column;justify-content:flex-start;}
+.fiche h3{margin:0 0 10px;color:var(--accent);font-size:17.5px;}
+.fiche p{margin:0 0 10px;font-size:16px;}
+.fiche .encart{background:rgba(77,208,225,.09);border-left:3px solid var(--cyan);border-radius:0 12px 12px 0;
+  padding:11px 13px;font-size:14.5px;margin-top:6px;}
+.fiche .encart b{color:var(--cyan);}
+.fiche ul{margin:4px 0;padding-left:20px;font-size:15.5px;}
+.fiche li{margin-bottom:7px;}
+.dots{display:flex;gap:7px;justify-content:center;margin:14px 0 4px;}
+.dots i{width:8px;height:8px;border-radius:99px;background:#3b3f77;transition:background .2s;}
+.dots i.on{background:var(--accent);}
+/* Quiz */
+.qhead{display:flex;justify-content:space-between;align-items:center;color:var(--muted);
+  font-size:13.5px;margin:14px 2px 8px;font-weight:600;}
+.qtype{color:var(--cyan);}
+.qtext{background:var(--card);border-radius:16px;padding:16px 17px;font-size:16.5px;font-weight:600;
+  border:1px solid rgba(255,255,255,.07);}
+.opts{margin-top:12px;}
+.opt{display:block;width:100%;text-align:left;background:var(--card);color:var(--txt);
+  border:1.5px solid var(--card2);border-radius:14px;padding:13px 15px;font-size:15.5px;
+  margin-bottom:9px;cursor:pointer;transition:border-color .15s;}
+.opt:active{border-color:var(--accent);}
+.opt.ok{border-color:var(--ok);background:rgba(76,175,125,.13);}
+.opt.ko{border-color:var(--ko);background:rgba(224,92,110,.12);}
+.opt.dim{opacity:.5;}
+.fb{border-radius:14px;padding:13px 15px;font-size:14.5px;margin-top:4px;animation:pop .25s;}
+.fb.good{background:rgba(76,175,125,.13);border:1px solid rgba(76,175,125,.4);}
+.fb.bad{background:rgba(224,92,110,.12);border:1px solid rgba(224,92,110,.4);}
+.fb b{display:block;margin-bottom:4px;}
+@keyframes pop{from{transform:translateY(8px);opacity:0;}to{transform:none;opacity:1;}}
+/* Résultats */
+.result{text-align:center;padding:26px 0 6px;}
+.result .big{font-size:64px;}
+.result h2{margin:8px 0 4px;}
+.result .stars{font-size:34px;letter-spacing:4px;color:var(--gold);margin:6px 0;}
+.result .xp{color:var(--cyan);font-weight:700;font-size:18px;}
+/* Frise niveaux */
+.rank-item{display:flex;gap:14px;align-items:flex-start;position:relative;padding:0 0 26px 8px;}
+.rank-item:before{content:"";position:absolute;left:29px;top:46px;bottom:0;width:3px;background:var(--card2);}
+.rank-item:last-child:before{display:none;}
+.rank-item .re{width:46px;height:46px;border-radius:99px;background:var(--card2);display:flex;
+  align-items:center;justify-content:center;font-size:22px;flex-shrink:0;z-index:1;}
+.rank-item.here .re{background:var(--grad);box-shadow:0 0 0 3px var(--accent);}
+.rank-item.locked{opacity:.5;}
+.rank-item .ri b{display:block;font-size:16px;}
+.rank-item .ri small{color:var(--muted);font-size:13.5px;display:block;}
+.rank-item .here-tag{color:var(--gold);font-weight:800;font-size:12.5px;}
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(8,9,24,.75);display:flex;align-items:flex-end;
+  justify-content:center;z-index:50;animation:fade .2s;}
+@keyframes fade{from{opacity:0;}to{opacity:1;}}
+.modal{background:var(--bg2);border-radius:22px 22px 0 0;padding:22px 20px calc(24px + env(safe-area-inset-bottom));
+  width:100%;max-width:560px;max-height:82vh;overflow-y:auto;}
+.modal h3{margin:0 0 8px;}
+.modal textarea{width:100%;background:var(--bg);color:var(--cyan);border:1px solid var(--card2);
+  border-radius:12px;padding:11px;font-size:12.5px;font-family:monospace;min-height:86px;resize:none;}
+.modal .muted{color:var(--muted);font-size:14px;}
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+  background:var(--card2);color:var(--txt);padding:11px 20px;border-radius:99px;font-size:14.5px;
+  z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.4);animation:pop .25s;white-space:nowrap;}
+.obj-list{margin:8px 0;padding-left:4px;list-style:none;font-size:15px;}
+.obj-list li{margin-bottom:7px;padding-left:26px;position:relative;}
+.obj-list li:before{content:"🎯";position:absolute;left:0;font-size:14px;}
+.tp-step{color:var(--muted);font-size:13.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:16px 2px 8px;}
+.post-draft{background:rgba(255,202,85,.08);border:1px solid rgba(255,202,85,.35);border-radius:16px;
+  padding:16px;font-size:14.5px;margin-top:14px;}
+.post-draft h4{margin:0 0 8px;color:var(--gold);}
+.hint-export{background:rgba(77,208,225,.09);border:1px solid rgba(77,208,225,.3);border-radius:14px;
+  padding:12px 14px;font-size:14px;margin-top:14px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+"use strict";
+/* ================= SherpIA v1.0 — moteur data-driven =================
+   Sauvegarde versionnée SHP1- dès la V1 (leçon Cortex §3/§5).       */
+
+/* ---------- Utilitaires partagés ---------- */
+function shuffle(arr){ /* Fisher-Yates — LE mélange unique de l'app (leçon Cortex §4) */
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function el(html){const d=document.createElement("div");d.innerHTML=html;return d.firstElementChild;}
+const $=sel=>document.querySelector(sel);
+
+/* ---------- Rangs (calibrés sur le parcours COMPLET : ~2955 XP — leçon PyQuest §3) ---------- */
+const RANKS=[
+ {t:0,e:"🐣",n:"Cria",d:"Le bébé lama — tout frais sur le sentier."},
+ {t:150,e:"🎒",n:"Marcheur du camp de base",d:"Les premiers concepts sont dans le sac."},
+ {t:400,e:"🥾",n:"Éclaireur des contreforts",d:"Tu repères les faux plats du discours IA."},
+ {t:700,e:"🧭",n:"Guide de sentier",d:"On commence à te suivre quand tu expliques."},
+ {t:1050,e:"⛰️",n:"Passeur de cols",d:"Les clients passent les cols difficiles grâce à toi."},
+ {t:1500,e:"🌄",n:"Maître des arêtes",d:"À l'aise sur les crêtes les plus techniques."},
+ {t:2000,e:"🏔️",n:"Sherpa des sommets",d:"Tu guides jusqu'au sommet, en toute saison."},
+ {t:2500,e:"✨",n:"Lama légendaire",d:"On raconte tes explications au coin du feu."}
+];
+</script>
+<script id="data-script">
+/* ================= CONTENU (data-driven — le moteur ne connaît rien du contenu) ================= */
+const CHAPTERS=[
+ {id:"ch1",num:1,e:"🌱",title:"La machine qui apprend",soon:true,teaser:"ML : les 3 façons d'apprendre, la donnée-carburant, entraînement vs inférence."},
+ {id:"ch2",num:2,e:"🧠",title:"Dans le cerveau des réseaux",soon:true,teaser:"Deep learning : neurones, profondeur, vision… et les embeddings, le concept pivot."},
+ {id:"ch3",num:3,e:"✨",title:"La révolution générative",soon:false,teaser:"LLMs : tokens, fabrication, prompting, hallucinations, multimodal.",lessons:[
+  {id:"l31",title:"Prédire le mot suivant",
+   obj:["Expliquer en une phrase ce que fait réellement un LLM","Comprendre ce qu'est un token et ce que ça implique","Répondre à « mais est-ce qu'il comprend vraiment ? »"],
+   fiches:[
+    {t:"Une machine à deviner la suite",h:"<p>Un LLM n'a appris qu'une seule chose : <b>prédire le mot le plus probable</b> après une séquence de texte. « Le technicien serre le dernier ___ » → « boulon ».</p><p>Répétée des milliards de fois sur une bibliothèque gigantesque de textes, cette capacité finit par capturer la grammaire, les connaissances, et même une forme de raisonnement.</p><p>C'est un autocomplete devenu si bon qu'il en paraît intelligent.</p>"},
+    {t:"Les tokens : l'unité de base",h:"<p>Le modèle ne voit ni lettres ni mots entiers : il découpe le texte en <b>tokens</b>, des morceaux de mots convertis en nombres (« industrialisation » → « industri / alis / ation »).</p><p>C'est pour ça qu'un LLM peut briller en stratégie et échouer à compter les lettres d'un mot : il ne les voit littéralement pas.</p><p>C'est aussi pour ça que les API d'IA se facturent au token — l'unité de mesure du domaine, comme le kWh en énergie.</p>"},
+    {t:"L'émergence : quand la taille change tout",h:"<p>Un petit modèle prédit mal et ne sait rien faire d'autre. Mais en augmentant massivement la taille du modèle et des données, des capacités que personne n'a programmées <b>émergent</b> : traduire, résumer, structurer, coder.</p><div class='encart'><b>🏗️ Dans une vraie situation</b> — Un client te demande : « Mais est-ce qu'il comprend vraiment ? » Réponse de Field CTO : « Il prédit — mais à cette échelle, la prédiction produit un comportement qui ressemble beaucoup à de la compréhension. La vraie question n'est pas philosophique : c'est de savoir où cette mécanique excelle et où elle piège. »</div>"}],
+   resume:["Un LLM fait une seule chose : prédire le token suivant, très très bien.","Il voit des tokens (morceaux de mots numérisés), pas des lettres — d'où certaines erreurs surprenantes et la facturation au token.","À très grande échelle, des capacités non programmées émergent : c'est la révolution de 2020-2023.","« Il prédit » n'est pas une faiblesse en soi — c'est une mécanique dont il faut connaître les excellences et les pièges."],
+   quiz:[
+    {ty:"QCM",q:"Quelle est la tâche fondamentale pour laquelle un LLM a été entraîné ?",opts:[{t:"Prédire le prochain token d'une séquence",ok:true},{t:"Rechercher la bonne réponse dans une base de données"},{t:"Appliquer des règles de grammaire écrites par des linguistes"},{t:"Traduire les questions en langage machine"}],fb:"Un LLM ne consulte aucune base et ne contient aucune règle écrite à la main : tout découle d'un unique entraînement à prédire la suite d'un texte."},
+    {ty:"Vrai/Faux",vf:true,q:"« Un LLM stocke une copie du web et va y chercher ses réponses quand on l'interroge. »",opts:[{t:"Vrai"},{t:"Faux",ok:true}],fb:"Il a compressé des régularités statistiques dans ses paramètres — au moment de répondre, il ne « consulte » rien. Brancher un LLM sur de vrais documents, ça existe : c'est la RAG (chapitre 4)."},
+    {ty:"🔍 Analyse",q:"Une collègue s'amuse : « Cette IA soi-disant géniale n'arrive même pas à dire combien il y a de \"s\" dans \"processus\" ! » L'explication la plus juste ?",opts:[{t:"Le modèle voit des tokens, pas des lettres — compter des lettres lui est structurellement difficile",ok:true},{t:"Le modèle a été mal entraîné sur le français"},{t:"C'est un bug qui sera corrigé dans la prochaine version"},{t:"La question était mal formulée"}],fb:"« processus » arrive au modèle découpé en morceaux numérisés — il n'a jamais « vu » les lettres. Les échecs surprenants d'une IA révèlent souvent comment elle marche."},
+    {ty:"Texte à trou",q:"Les API des fournisseurs d'IA se facturent au ___, l'unité de base du texte pour un LLM.",opts:[{t:"token",ok:true},{t:"mot"},{t:"caractère"},{t:"paragraphe"}],fb:"Le token (~un morceau de mot) est l'unité de mesure du domaine — indispensable pour parler coûts avec un client (chapitre 7)."},
+    {ty:"🐛 Repère l'erreur",q:"Post LinkedIn fictif : « Les LLM maîtrisent nos langues car [A] leurs concepteurs ont codé la grammaire dans le modèle, et [B] ils ont été entraînés sur d'immenses corpus. » Quelle affirmation est fausse ?",opts:[{t:"L'affirmation A",ok:true},{t:"L'affirmation B"},{t:"Les deux"},{t:"Aucune"}],fb:"Rien n'est codé à la main : la grammaire est apprise, jamais programmée (A est faux, B est vrai). Grand classique des posts LinkedIn — savoir le repérer, c'est déjà de l'évangélisation."},
+    {ty:"🎯 Scénario métier",q:"Un directeur de BE : « Si ça ne fait que prédire le mot suivant, ça ne peut pas m'aider à rédiger des exigences techniques. » Ta meilleure réponse :",opts:[{t:"« La prédiction à grande échelle capture structure et style : excellent pour rédiger — mais on relit, car le modèle optimise la plausibilité, pas la vérité »",ok:true},{t:"« Détrompez-vous, les LLM comprennent parfaitement ce qu'ils écrivent »"},{t:"« C'est vrai, les LLM ne servent à rien pour la rédaction technique »"},{t:"« Il faudra attendre la prochaine génération de modèles »"}],fb:"La posture d'évangéliste : ni survendre ni enterrer. Reconnaître la mécanique ET montrer ce qu'elle rend possible, avec le garde-fou qui va bien."}]},
+  {id:"l32",title:"Comment on fabrique un LLM",
+   obj:["Décrire les 2 grandes étapes de fabrication d'un LLM","Expliquer pourquoi un modèle « brut » ne suffit pas","Répondre à « on peut l'avoir chez nous ? »"],
+   fiches:[
+    {t:"Le pré-entraînement : lire (presque) tout",h:"<p>Étape 1 : on fait lire au modèle un corpus colossal, pendant des mois, sur des milliers de GPU — c'est là que partent les millions d'euros.</p><p>Le résultat est un <b>modèle de base</b> : brillant pour compléter du texte, mais brut — il ne sait ni converser, ni suivre une consigne.</p><p>C'est le brut de fonderie : toute la matière est là, rien n'est usiné.</p>"},
+    {t:"L'affinage : apprendre le métier d'assistant",h:"<p>Étape 2 : on usine. D'abord avec des milliers d'exemples de bons dialogues, puis en faisant <b>noter les réponses par des humains</b> pour que le modèle apprenne à préférer ce que nous préférons (le fameux RLHF).</p><p>C'est un compagnonnage : le savoir vient du pré-entraînement, la manière vient de l'affinage.</p><p>C'est cette étape qui transforme un moteur de complétion en assistant utilisable.</p>"},
+    {t:"Poids ouverts, poids fermés",h:"<p>Les milliards de réglages internes appris s'appellent les <b>paramètres</b> (ou poids). Certains éditeurs les publient (modèles « open weights », comme les LLaMA de Meta — oui, comme la mascotte 🦙), d'autres vendent l'accès par API.</p><div class='encart'><b>🏗️ Dans une vraie situation</b> — Un DSI demande presque toujours : « On peut l'avoir <i>chez nous</i> ? » Oui : un modèle open weights sur ses serveurs — souvent moins puissant que les meilleurs modèles API, mais les données ne sortent jamais. Un arbitrage puissance / maîtrise, pas une question de faisabilité.</div>"}],
+   resume:["Étape 1, pré-entraînement : corpus massif → modèle de base brillant mais brut.","Étape 2, affinage + RLHF : exemples et notations humaines lui apprennent le métier d'assistant.","Open weights = déployable chez soi ; API = plus puissant mais externalisé.","Un modèle n'apprend PAS en continu : ses connaissances sont figées à l'entraînement."],
+   quiz:[
+    {ty:"QCM",q:"Dans quel ordre fabrique-t-on un assistant IA ?",opts:[{t:"Pré-entraînement massif, puis affinage sur dialogues et préférences humaines",ok:true},{t:"Affinage d'abord, pré-entraînement ensuite"},{t:"Une seule étape : on lui apprend directement à converser"},{t:"On programme les réponses, puis on ajoute du vocabulaire"}],fb:"D'abord la culture générale (pré-entraînement), ensuite le métier d'assistant (affinage). Aucune réponse n'est programmée à la main."},
+    {ty:"Vrai/Faux",vf:true,q:"« Le RLHF consiste à faire écrire toutes les réponses du modèle par des humains. »",opts:[{t:"Vrai"},{t:"Faux",ok:true}],fb:"Les humains ne rédigent pas les réponses : ils les NOTENT. Le modèle apprend de ces préférences. Nuance utile face à un client qui croirait qu'« il y a des gens qui répondent derrière »."},
+    {ty:"QCM",q:"Si tu interrogeais un modèle de base (sans affinage), à quoi ressemblerait l'échange ?",opts:[{t:"Il continuerait ton texte au lieu de te répondre — plausible mais inutilisable comme assistant",ok:true},{t:"Il répondrait exactement comme ChatGPT"},{t:"Il refuserait de répondre sans licence"},{t:"Il répondrait uniquement en anglais"}],fb:"Un modèle de base complète : posez une question, il peut enchaîner… par trois autres questions du même style. Ça illustre ce que l'affinage apporte : le format conversationnel lui-même."},
+    {ty:"Texte à trou",q:"Les milliards de réglages internes qu'un modèle apprend s'appellent les ___.",opts:[{t:"paramètres (ou poids)",ok:true},{t:"tokens"},{t:"prompts"},{t:"algorithmes"}],fb:"« Modèle à 70 milliards de paramètres » = 70 milliards de réglages appris. Token = unité du texte, prompt = consigne — trois termes à ne pas mélanger devant un client."},
+    {ty:"🐛 Repère l'erreur",q:"Un commercial : « Notre chatbot GPT apprend en continu de chaque conversation avec vos équipes, il devient chaque jour plus intelligent. » Le problème ?",opts:[{t:"Les connaissances d'un modèle sont figées à l'entraînement — il n'apprend pas de vos conversations",ok:true},{t:"Rien, c'est exact"},{t:"Le problème est légal, pas technique"},{t:"GPT ne peut pas être utilisé en entreprise"}],fb:"Un modèle déployé n'est pas ré-entraîné en continu. Ce qui donne cette impression : la mémoire de session ou l'ajout de contexte — mais le modèle ne change pas. Affirmation marketing à challenger."},
+    {ty:"🎯 Scénario métier",q:"Un équipementier défense exige que rien ne sorte de son infrastructure. Ta première piste :",opts:[{t:"Un modèle open weights déployé sur ses propres serveurs",ok:true},{t:"Impossible, l'IA générative nécessite le cloud"},{t:"ChatGPT grand public avec des données anonymisées"},{t:"Attendre une réglementation plus claire"}],fb:"Open weights on-premise = maîtrise totale des données. Moins puissant que les meilleurs modèles API, mais pour la défense c'est souvent le seul chemin acceptable — une vraie réponse, pas un renoncement."}]},
+  {id:"l33",title:"Parler à la machine : le prompting",
+   obj:["Expliquer pourquoi la qualité de la consigne fait la qualité du résultat","Comprendre la fenêtre de contexte et ses limites","Connaître les 4 réflexes d'un bon prompt"],
+   fiches:[
+    {t:"Le prompt : un cahier des charges",h:"<p>Le <b>prompt</b>, c'est tout ce que tu donnes au modèle : consigne, contexte, exemples, format attendu. La règle est celle du cahier des charges : <b>spec floue → livrable flou</b>.</p><p>La différence entre une réponse banale et une réponse remarquable vient rarement du modèle — presque toujours de la consigne.</p><p>Bonne nouvelle : exprimer un besoin, c'est ton métier depuis des années.</p>"},
+    {t:"La fenêtre de contexte : sa mémoire de travail",h:"<p>Le modèle ne « voit » que ce qui tient dans sa <b>fenêtre de contexte</b> : ta consigne, la conversation en cours, les documents fournis.</p><p>C'est son plan de travail — grand, mais fini, et vidé entre deux sessions : par défaut, il ne se souvient de rien d'hier.</p><p>Tout ce qui n'est pas dans la fenêtre n'existe pas pour lui, aussi important que ce soit pour toi.</p>"},
+    {t:"Les 4 réflexes qui changent tout",h:"<p>Un <b>rôle</b> (« Tu es consultant PLM senior… »), du <b>contexte</b> (le client, l'objectif, les contraintes), un ou deux <b>exemples</b> du résultat attendu, et un <b>format de sortie</b> explicite.</p><p>Puis on itère : le premier résultat est un brouillon qu'on affine, pas un verdict.</p><div class='encart'><b>🏗️ Dans une vraie situation</b> — La démo qui marque : le même modèle, deux prompts. « Résume ce compte-rendu » → soupe tiède. « Tu es le directeur industriel : ressors les 3 décisions, les 2 risques et qui doit agir avant vendredi, en tableau » → bluffant. Message : <i>l'IA ne remplace pas l'expression de besoin — elle la récompense.</i></div>"}],
+   resume:["Le prompt est un cahier des charges : spec floue, livrable flou.","La fenêtre de contexte est la mémoire de travail du modèle — finie, et vide par défaut entre les sessions.","Rôle + contexte + exemples + format attendu : les 4 réflexes d'une bonne consigne.","Itérer est normal : la première réponse est un brouillon, pas un verdict."],
+   quiz:[
+    {ty:"🎯 QCM scénario",q:"Tu veux une synthèse d'un rapport d'audit qualité pour ton COMEX. Quel prompt donnera le meilleur résultat ?",opts:[{t:"« Tu es directeur qualité. Synthétise ce rapport pour un COMEX : 3 constats majeurs, 2 actions prioritaires, ton neutre, 15 lignes max »",ok:true},{t:"« Résume ce document »"},{t:"« Fais un résumé complet et détaillé de tout le rapport »"},{t:"« Ce rapport est-il bon ? »"}],fb:"Rôle, destinataire, structure, contrainte de longueur : tout y est. « Résume ce document » produira une réponse correcte et générique — la moyenne de ce qu'internet appelle un résumé."},
+    {ty:"Vrai/Faux",vf:true,q:"« Par défaut, un assistant IA se souvient de la conversation que vous avez eue avec lui la semaine dernière. »",opts:[{t:"Vrai"},{t:"Faux",ok:true}],fb:"La fenêtre de contexte se vide entre les sessions. Les fonctions « mémoire » de certains produits sont une couche ajoutée par-dessus (des notes réinjectées), pas une capacité du modèle."},
+    {ty:"Texte à trou",q:"Tout ce que le modèle peut prendre en compte à un instant donné doit tenir dans sa fenêtre de ___.",opts:[{t:"contexte",ok:true},{t:"calcul"},{t:"mémoire vive"},{t:"session"}],fb:"C'est elle qui borne la taille des documents analysables d'un coup — et son extension est un argument marketing majeur entre éditeurs."},
+    {ty:"QCM",q:"Pourquoi donner un ou deux exemples du résultat attendu améliore-t-il autant la réponse ?",opts:[{t:"Le modèle imite le motif fourni — la prédiction s'aligne sur la forme démontrée",ok:true},{t:"Les exemples ré-entraînent le modèle définitivement"},{t:"Ça augmente la taille de la fenêtre de contexte"},{t:"C'est un mythe, les exemples ne changent rien"}],fb:"C'est le « few-shot » : montrer vaut mieux que décrire, car le modèle est une machine à continuer les motifs. Rien n'est ré-entraîné — l'effet dure le temps de la conversation."},
+    {ty:"🐛 Repère l'erreur",q:"Un collègue : « J'ai tapé ma question, la réponse était moyenne. Cette IA est nulle, je passe à autre chose. » L'erreur de méthode ?",opts:[{t:"Juger l'outil sur un premier jet sans consigne travaillée ni itération",ok:true},{t:"Il aurait dû tester en anglais"},{t:"Il aurait dû utiliser un modèle plus gros"},{t:"Aucune erreur : un bon outil doit être bon du premier coup"}],fb:"L'erreur n°1 des déçus de l'IA. Un premier jet sur une question sèche mesure la consigne, pas l'outil. « Exprimer son besoin, puis itérer » fait tout l'écart entre utilisateurs."},
+    {ty:"🎯 Scénario métier",q:"En atelier client, l'assistant IA répond des généralités sur leurs processus de conception. Ta meilleure action immédiate :",opts:[{t:"Enrichir le prompt avec leur contexte : secteur, outils, vocabulaire maison, exemple concret",ok:true},{t:"Conclure que l'IA n'est pas prête pour leur métier"},{t:"Changer de fournisseur de modèle"},{t:"Reformuler la même question plus poliment"}],fb:"Généralité en sortie = manque de spécifique en entrée. Et quand le contexte à fournir devient trop gros pour un prompt, la bonne réponse s'appelle la RAG (chapitre 4)."}]},
+  {id:"l34",title:"Les hallucinations",
+   obj:["Expliquer ce qu'est une hallucination et pourquoi elle est structurelle","Connaître les 3 parades concrètes","Cadrer le risque face à un client échaudé"],
+   fiches:[
+    {t:"Plausible n'est pas vrai",h:"<p>Un LLM optimise une chose : la <b>vraisemblance</b> de la suite du texte. Quand il sait, le plus plausible est souvent le vrai ; quand il ne sait pas, il produit quand même la suite la plus plausible — fluide, assurée, et fausse.</p><p>C'est l'<b>hallucination</b> : une invention livrée avec l'aplomb d'une certitude.</p><p>Le danger n'est pas que le modèle se trompe — c'est qu'il se trompe sans jamais changer de ton.</p>"},
+    {t:"Pourquoi on ne « corrige » pas ça",h:"<p>On ne peut pas patcher l'hallucination comme un bug : c'est le <b>même mécanisme</b> qui produit la fluidité ET l'invention.</p><p>Les éditeurs la <b>réduisent</b> (meilleures données, alignement, capacité à dire « je ne sais pas ») mais aucun modèle du marché n'est à zéro.</p><p>Toute promesse de « zéro hallucination » est un signal d'alarme, pas un argument.</p>"},
+    {t:"Les trois parades",h:"<p><b>Un</b> : ancrer le modèle sur des documents de référence — il cite au lieu d'inventer (c'est la RAG, chapitre 4). <b>Deux</b> : exiger les sources et vérifier ce qui engage. <b>Trois</b> : garder l'humain dans la boucle partout où l'erreur coûte cher.</p><div class='encart'><b>🏗️ Dans une vraie situation</b> — Un DSI échaudé : « Votre IA invente — on ne peut pas lui faire confiance. » Réponse : « Vous avez raison, et c'est structurel. La question n'est donc pas <i>confiance oui/non</i>, mais <i>quel usage pour quel niveau de risque</i> : brouillon relu par un expert → oui ; réponse automatique engageante → avec garde-fous. » Cadrer le risque, c'est ça, la crédibilité.</div>"}],
+   resume:["Halluciner = produire du plausible faux, avec l'aplomb du vrai — conséquence directe du principe de prédiction.","Pas un bug corrigible : les éditeurs réduisent, personne n'élimine. « Zéro hallucination » = signal d'alarme.","Parades : ancrage sur documents (RAG), exigence de sources, humain dans la boucle selon la criticité.","La bonne question client : quel usage pour quel niveau de risque."],
+   quiz:[
+    {ty:"QCM",q:"Quelle définition d'une hallucination est la plus juste ?",opts:[{t:"Une réponse plausible et affirmée, mais factuellement fausse",ok:true},{t:"Un plantage du serveur du modèle"},{t:"Une réponse volontairement trompeuse"},{t:"Une réponse hors sujet mais vraie"}],fb:"Ni panne ni mensonge (pas d'intention) : une invention statistiquement cohérente. C'est l'aplomb du ton qui la rend dangereuse."},
+    {ty:"Vrai/Faux",vf:true,q:"« L'hallucination est un défaut de jeunesse qui sera totalement éliminé par les prochaines versions de modèles. »",opts:[{t:"Vrai"},{t:"Faux",ok:true}],fb:"Elle est inhérente au mécanisme de prédiction. Les taux baissent génération après génération, mais viser zéro par le seul modèle n'est pas réaliste — d'où les parades d'architecture et de process."},
+    {ty:"🔍 Analyse",q:"L'assistant d'un ingénieur méthodes cite « la directive machine 2006/42/CE, article 12.4 » — l'article n'existe pas. Pourquoi la citation était-elle si convaincante ?",opts:[{t:"Le modèle a reproduit le format exact d'une vraie référence — la forme est apprise, le contenu est inventé",ok:true},{t:"Le modèle a piraté une base réglementaire obsolète"},{t:"L'ingénieur a mal recopié la référence"},{t:"Les textes réglementaires sont absents des données d'entraînement"}],fb:"Le modèle excelle à reproduire la FORME (numérotation, style juridique) même quand le fond est inventé. Plus le domaine a un formalisme fort, plus le faux ressemble au vrai."},
+    {ty:"QCM",q:"Pour un assistant qui répond sur la documentation interne d'une entreprise, quelle mesure réduit le plus les hallucinations ?",opts:[{t:"L'ancrer sur les documents de référence pour qu'il cite au lieu d'inventer (RAG)",ok:true},{t:"Lui demander poliment de ne pas se tromper"},{t:"Augmenter la taille du modèle"},{t:"Le faire répondre plus lentement"}],fb:"Ancrer le modèle change la nature de l'exercice : de « réciter de mémoire » à « répondre les documents sous les yeux ». C'est LE sujet du chapitre 4."},
+    {ty:"🐛 Repère l'erreur",q:"Sur un salon, un éditeur affiche : « Grâce à notre fine-tuning propriétaire, notre IA n'hallucine jamais. » Ta lecture :",opts:[{t:"Promesse invérifiable et structurellement fausse — à challenger avec un taux mesuré et un protocole d'évaluation",ok:true},{t:"Crédible si l'éditeur est un grand nom"},{t:"Vrai si le modèle est entraîné sur les données du client"},{t:"Impossible à évaluer, donc sans importance"}],fb:"« Jamais » est le mot qui trahit. La réponse pro : demander le taux d'erreur mesuré, sur quel jeu de test, avec quel protocole. Un éditeur sérieux a ces chiffres."},
+    {ty:"🎯 Scénario métier",q:"MécaNova veut prioriser ses premiers usages IA. Lequel présente le meilleur rapport valeur/risque au démarrage ?",opts:[{t:"Générer des brouillons de comptes-rendus d'essais, systématiquement relus par l'ingénieur responsable",ok:true},{t:"Répondre automatiquement aux questions réglementaires des clients, sans relecture"},{t:"Valider seul la conformité des dossiers avant livraison"},{t:"Rédiger les notices de sécurité publiées sans contrôle"}],fb:"La grille : criticité de l'erreur × présence d'un humain. Brouillon + relecture experte = combo idéal pour démarrer. Les trois autres mettent une réponse non vérifiée face à un enjeu réglementaire ou de sécurité."}]},
+  {id:"l35",title:"Au-delà du texte : le multimodal",
+   obj:["Expliquer ce que « multimodal » veut dire concrètement","Citer 3 usages industriels crédibles","Poser les bonnes questions devant une démo spectaculaire"],
+   fiches:[
+    {t:"Tout devient token",h:"<p>Un modèle <b>multimodal</b> traite images, audio ou vidéo en plus du texte : tout est converti dans le même espace de représentation interne, comme le texte l'est en tokens.</p><p>Tu montres une photo, il la décrit ; tu parles, il transcrit et répond ; tu demandes un schéma, il le génère.</p><p>Le texte n'est plus la seule porte d'entrée — c'est un changement d'interface autant que de capacité.</p>"},
+    {t:"Ce que ça ouvre côté industrie",h:"<p>Photographier un composant pour lancer une recherche, faire décrire un écart entre deux versions d'un schéma, dicter un rapport d'intervention en atelier les mains prises, générer l'illustration d'un concept pour une présentation client.</p><p>Le multimodal rapproche l'IA du terrain — là où l'information naît en photos, en croquis et en paroles bien plus qu'en textes propres.</p>"},
+    {t:"La démo spectaculaire et ses limites",h:"<p>La lecture <b>précise</b> d'un plan CAO coté reste un point faible : petites annotations, tolérances, raisonnement spatial fin. Le modèle décrit bien l'ensemble mais peut se tromper sur la cote exacte qui compte.</p><p>Une démo réussie sur trois exemples choisis ne dit rien du taux d'erreur sur mille cas réels.</p><div class='encart'><b>🏗️ Dans une vraie situation</b> — Un client ébloui par un salon : « L'IA lit nos plans maintenant ! » Tes trois questions : quel taux d'erreur mesuré ? sur quel échantillon ? pour quelle criticité d'usage ? La démo montre le possible — toi, tu vends le fiable.</div>"}],
+   resume:["Multimodal = le modèle traite images, audio et vidéo dans le même espace interne que le texte.","Usages industriels crédibles : recherche par photo, comparaison visuelle, dictée terrain, génération d'illustrations.","Point faible persistant : la précision fine sur documents techniques denses (plans cotés).","Réflexe devant une démo : taux d'erreur, échantillon, criticité — le possible n'est pas le fiable."],
+   quiz:[
+    {ty:"QCM",q:"Qu'est-ce qui définit un modèle « multimodal » ?",opts:[{t:"Il traite plusieurs types d'entrées/sorties (texte, image, audio…) dans un même espace de représentation",ok:true},{t:"Il fonctionne sur plusieurs appareils à la fois"},{t:"Il combine plusieurs modèles de langues différentes"},{t:"Il propose plusieurs modes de conversation (formel, créatif…)"}],fb:"« Modalité » = type de média. Le tour de force : représenter une photo et une phrase dans le même espace interne, pour raisonner sur les deux ensemble."},
+    {ty:"Vrai/Faux",vf:true,q:"« Pour qu'une IA analyse une image, il faut d'abord qu'un humain la décrive en texte. »",opts:[{t:"Vrai"},{t:"Faux",ok:true}],fb:"C'était vrai à l'époque des systèmes en silo — un modèle multimodal « regarde » l'image directement. C'est tout l'intérêt."},
+    {ty:"🎯 Scénario",q:"Sur une ligne d'assemblage, un opérateur doit signaler les anomalies mais a les mains prises. L'apport multimodal le plus pertinent ?",opts:[{t:"Dicter le constat à voix haute, photo de l'anomalie à l'appui, l'IA structure le rapport",ok:true},{t:"Un chatbot texte accessible depuis la salle de pause"},{t:"Un rapport hebdomadaire généré automatiquement sans intervention"},{t:"Une traduction automatique des procédures"}],fb:"Voix + photo = les deux modalités naturelles du terrain. Le multimodal vaut le plus là où taper du texte est justement ce qui ne marche pas."},
+    {ty:"QCM",q:"Pourquoi la lecture d'un plan technique coté reste-t-elle risquée pour un modèle multimodal, alors qu'il décrit très bien une photo ?",opts:[{t:"La précision fine (petites annotations, tolérances, spatial) est bien plus exigeante que la description globale",ok:true},{t:"Les plans sont toujours confidentiels donc absents de l'entraînement"},{t:"Les modèles ne voient qu'en noir et blanc"},{t:"Les fichiers CAO sont trop volumineux à charger"}],fb:"Décrire « un support avec 4 perçages » : facile. Lire de façon fiable que LA tolérance critique est ±0,02 : autre niveau. L'écart entre les deux = l'écart entre démo et production."},
+    {ty:"🐛 Repère l'erreur",q:"Vidéo promo : « Notre IA a analysé 3 schémas électriques sans erreur : la relecture humaine de vos plans, c'est terminé. » Le raisonnement fautif ?",opts:[{t:"Généraliser de 3 exemples réussis à une fiabilité de production, sur un usage critique",ok:true},{t:"Les schémas électriques ne sont pas analysables par l'IA"},{t:"Le problème est l'absence de brevet sur la méthode"},{t:"Rien : 3 succès suffisent à prouver la fiabilité"}],fb:"Trois succès choisis ne sont pas un taux d'erreur. Et « supprimer la relecture humaine » sur un livrable critique cumule les deux drapeaux rouges du chapitre : sur-généralisation + suppression du garde-fou."},
+    {ty:"Texte à trou",q:"En IA, un type de média (texte, image, audio, vidéo) s'appelle une ___.",opts:[{t:"modalité",ok:true},{t:"fréquence"},{t:"interface"},{t:"extension"}],fb:"D'où « multimodal ». Petit mot à placer correctement en réunion — vocabulaire minimal du sujet, comme token et paramètre."}]}
+ ],
+ tp:{id:"tp3",title:"TP — « Un ChatGPT interne pour MécaNova »",
+  intro:"Karim, DSI de MécaNova (équipementier auto, 800 personnes, 3DEXPERIENCE), t'appelle : « La direction me met la pression : tout le monde a un ChatGPT interne sauf nous. Il me faut ça pour la rentrée. Tu m'aides à cadrer ? »<br><br>Tu joues ton futur rôle : le consultant de confiance. À chaque étape, choisis ta réponse.",
+  steps:[
+   {label:"Étape 1 — La première question",q:"Que demandes-tu en premier à Karim ?",opts:[
+    {t:"« Pour quels usages, par qui, avec quelles données ? »",ok:true,fb:"La question outil vient après la question usage. Karim répond : les ingénieurs veulent chercher dans les normes internes, la doc méthodes, et rédiger plus vite comptes-rendus et exigences."},
+    {t:"« Quel est ton budget ? »",fb:"Trop tôt : sans usages définis, aucun chiffrage n'a de sens — tu chiffrerais un fantasme."},
+    {t:"« Tu préfères OpenAI, Google ou Mistral ? »",fb:"C'est répondre à la mode par la mode. Le choix d'un modèle est une conséquence du besoin, jamais un point de départ."}]},
+   {label:"Étape 2 — Les données sensibles",q:"Karim : « Nos données CAO et nos coûts de revient, hors de question que ça parte chez un éditeur américain. » Ta réponse la plus juste :",opts:[
+    {t:"« Distinguons les usages : données sensibles → modèle open weights hébergé chez vous ; pour le reste, une API avec accord d'entreprise peut suffire. »",ok:true,fb:"L'arbitrage puissance/maîtrise de la leçon 3.2, appliqué par niveau de sensibilité — exactement ce qu'un Field CTO apporte : de la nuance actionnable."},
+    {t:"« Alors aucune IA générative n'est possible chez vous. »",fb:"Faux dilemme — tu viens de fermer la porte que tu devais ouvrir."},
+    {t:"« Tout le monde utilise ChatGPT en douce, autant officialiser. »",fb:"Le « shadow AI » est un vrai constat… mais l'officialiser sans cadre, c'est transformer un risque subi en risque signé."}]},
+   {label:"Étape 3 — L'incident",q:"Trois semaines après le pilote, un ingénieur furieux : l'assistant a cité un paragraphe de la norme interne MN-STD-114 qui n'existe pas. Devant le comité, tu expliques :",opts:[
+    {t:"« Le modèle a répondu de mémoire en imitant le format de vos normes : plausible, faux, et structurel. La solution n'est pas un patch : il faut l'ancrer sur vos documents pour qu'il cite au lieu de réciter. »",ok:true,fb:"Diagnostic juste (leçon 3.4) + chemin de solution (la RAG — chapitre 4). Transformer un incident en feuille de route : c'est le métier."},
+    {t:"« Le prestataire a mal configuré l'outil, on va le faire corriger. »",fb:"Tu promets un correctif impossible : tu paieras cette promesse au prochain incident."},
+    {t:"« C'est la preuve que l'IA n'est pas prête, suspendons le pilote. »",fb:"Sur-réaction symétrique de la sur-promesse. L'incident était prévisible ET cadrable — suspendre maintenant, c'est gâcher l'apprentissage payé."}]},
+   {label:"Étape 4 — 🔍 Le slide du prestataire",q:"Un intégrateur présente son offre : « [1] Hébergé en France · [2] Fine-tuné sur votre vocabulaire · [3] Zéro hallucination garantie grâce à notre technologie propriétaire · [4] Vos données ne servent jamais à d'autres clients ». Quelle affirmation challenger en priorité ?",opts:[
+    {t:"Affirmation 3 — « zéro hallucination garantie »",ok:true,fb:"Structurellement faux (leçon 3.4). Ta question qui tue : « Quel taux mesuré, sur quel jeu de test, avec quel protocole ? » La réponse — ou son absence — te dira tout du sérieux de l'intégrateur."},
+    {t:"Affirmation 1 — l'hébergement en France",fb:"Vérifiable contractuellement — pas le drapeau rouge prioritaire."},
+    {t:"Affirmation 2 — le fine-tuning métier",fb:"Plausible et utile, à faire préciser (quelles données ? quel volume ?), mais pas le signal d'alarme."},
+    {t:"Affirmation 4 — l'isolation des données",fb:"Standard des offres entreprise, à verrouiller au contrat — pas le signal d'alarme."}]}],
+  post:"<h4>💼 Ébauche de post LinkedIn générée</h4><p><b>« Ce que j'ai répondu à un DSI qui voulait un ChatGPT interne »</b></p><p>Tout le monde veut son ChatGPT interne. Presque personne ne pose d'abord la seule question qui compte : pour quels usages, avec quelles données ?</p><p>Ce que j'explique aux DSI industriels : (1) le choix du modèle est une conséquence du besoin, pas un point de départ ; (2) données sensibles ≠ pas d'IA — ça veut dire arbitrer entre modèle hébergé chez vous et API sous accord d'entreprise, usage par usage ; (3) votre assistant citera un jour une norme qui n'existe pas — ce n'est pas un bug de config, c'est structurel, et ça se cadre par l'architecture et le process.</p><p>Et si un prestataire vous promet « zéro hallucination » : demandez le taux mesuré et le protocole de test. Ce moment-là vaut tous les appels d'offres.</p><p><i>#IA #PLM #IndustrieDuFutur</i></p>"}},
+ {id:"ch4",num:4,e:"🔌",title:"Brancher l'IA sur le réel",soon:true,teaser:"La RAG : l'examen avec les documents sur la table. La suite directe de l'incident MécaNova…"},
+ {id:"ch5",num:5,e:"🤖",title:"L'ère des agents",soon:true,teaser:"Du chatbot à l'agent : outils, MCP, orchestration, garde-fous."},
+ {id:"ch6",num:6,e:"🏭",title:"L'IA entre à l'usine",soon:true,teaser:"Données industrielles, cas d'usage PLM, jumeau numérique, paysage éditeurs."},
+ {id:"ch7",num:7,e:"🚀",title:"De la démo au déploiement",soon:true,teaser:"Pourquoi les POC meurent, coûts, confidentialité, AI Act."},
+ {id:"ch8",num:8,e:"🎤",title:"Parler IA",soon:true,teaser:"L'art d'expliquer : analogies, objections, détecteur de buzz, thought leadership."}
+];
+</script>
+<script>
+/* ================= ÉTAT & SAUVEGARDE (format versionné SHP1-) ================= */
+const LS_KEY="sherpia";
+const SAVE_PREFIX="SHP", SAVE_VERSION=1;
+let state=loadState();
+
+function defaultState(){return {v:SAVE_VERSION,best:{},tp:{}};}
+function loadState(){
+  try{const raw=localStorage.getItem(LS_KEY);if(!raw)return defaultState();
+    return migrate(JSON.parse(raw));}catch(e){return defaultState();}
+}
+function migrate(s){ /* migration explicite à la lecture — leçon Cortex §3 */
+  if(!s||typeof s!=="object")return defaultState();
+  if(!s.v)s.v=1;
+  // v1 : format initial. Les futures versions ajouteront leurs migrations ici, en cascade.
+  s.best=s.best||{};s.tp=s.tp||{};
+  s.v=SAVE_VERSION;
+  return s;
+}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}}
+function checksum(str){let n=0;for(let i=0;i<str.length;i++)n=(n+str.charCodeAt(i)*(i%7+1))%1296;
+  return n.toString(36).padStart(2,"0").toUpperCase();}
+function exportCode(){
+  const b64=btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+  return SAVE_PREFIX+SAVE_VERSION+"-"+b64+"-"+checksum(b64);
+}
+function importCode(code){
+  const m=(code||"").trim().match(/^SHP(\d+)-([A-Za-z0-9+/=]+)-([A-Z0-9]{2})$/);
+  if(!m)return {err:"Format non reconnu. Un code SherpIA ressemble à SHP1-…-XX"};
+  if(checksum(m[2])!==m[3])return {err:"Code corrompu (somme de contrôle invalide). Vérifie le copier-coller."};
+  try{
+    const data=migrate(JSON.parse(decodeURIComponent(escape(atob(m[2])))));
+    state=data;save();return {ok:true};
+  }catch(e){return {err:"Code illisible. Vérifie le copier-coller."}}
+}
+
+/* ================= CALCULS (tout dynamique — leçon PyQuest §5) ================= */
+function passNeeded(n){return Math.ceil(n*0.6);}
+function lessonXP(ch,l){const b=state.best[l.id];if(b==null)return 0;
+  return b*10+(b===l.quiz.length?15:0);}
+function lessonMaxXP(l){return l.quiz.length*10+15;}
+function tpXP(tp){const b=state.tp[tp.id];if(b==null)return 0;
+  return b*10+(b===tp.steps.length?20:0);}
+function tpMaxXP(tp){return tp.steps.length*10+20;}
+function totalXP(){let x=0;
+  CHAPTERS.forEach(c=>{(c.lessons||[]).forEach(l=>x+=lessonXP(c,l));if(c.tp)x+=tpXP(c.tp);});
+  return x;}
+function maxAvailableXP(){let x=0;
+  CHAPTERS.forEach(c=>{if(c.soon)return;(c.lessons||[]).forEach(l=>x+=lessonMaxXP(l));if(c.tp)x+=tpMaxXP(c.tp);});
+  return x;}
+function stars(score,n){if(score==null)return 0;if(score>=n)return 3;if(score>=n-1)return 2;
+  return score>=passNeeded(n)?1:0;}
+function starStr(k){return k?"★".repeat(k)+"☆".repeat(3-k):"";}
+function lessonPassed(l){return (state.best[l.id]||0)>=passNeeded(l.quiz.length);}
+function lessonUnlocked(ch,i){
+  if(i===0)return true;
+  if(state.best[ch.lessons[i].id]!=null)return true; /* règle tolérante — leçon PyQuest §5 */
+  return lessonPassed(ch.lessons[i-1]);
+}
+function tpUnlocked(ch){return ch.lessons.every(lessonPassed);}
+function chapterAgg(ch){
+  const n=ch.lessons.length;let done=0,good=0,total=0;
+  ch.lessons.forEach(l=>{if(lessonPassed(l))done++;good+=state.best[l.id]||0;total+=l.quiz.length;});
+  return {done,n,good,total,tpDone:state.tp[ch.tp.id]!=null};
+}
+function currentRank(){const xp=totalXP();let r=RANKS[0],idx=0;
+  RANKS.forEach((k,i)=>{if(xp>=k.t){r=k;idx=i;}});
+  return {r,idx,xp};}
+
+/* ================= NAVIGATION (pushState — geste retour Android, leçon PyQuest §4) ================= */
+const app=$("#app");
+function go(view,params,replace){
+  const st=Object.assign({view},params||{});
+  if(replace)history.replaceState(st,"");else history.pushState(st,"");
+  render(st);
+}
+window.addEventListener("popstate",e=>{render(e.state||{view:"home"});});
+function render(st){
+  window.scrollTo(0,0);
+  if(st.view==="chapter")return renderChapter(st.ch);
+  if(st.view==="lesson")return renderLesson(st.ch,st.lesson);
+  if(st.view==="tp")return renderTP(st.ch);
+  if(st.view==="ranks")return renderRanks();
+  renderHome();
+}
+
+/* ================= VUES ================= */
+function header(){
+  const {r,idx,xp}=currentRank();
+  const next=RANKS[idx+1];
+  const pct=next?Math.min(100,Math.round((xp-r.t)/(next.t-r.t)*100)):100;
+  return `<div class="hdr">
+    <div class="hdr-row"><span class="lama">🦙</span>
+      <div class="t"><b>SherpIA</b><small>Ton guide vers les sommets de l'IA</small></div></div>
+    <div class="hdr-stats">
+      <button class="pill" id="p-rank">${r.e} ${r.n}</button>
+      <span class="pill">⚡ ${xp} XP</span>
+      <button class="pill" id="p-save">💾 Sauvegarde</button>
+    </div>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+    ${next?`<small style="color:#d5ccf5;font-size:12px;display:block;margin-top:6px">${next.t-xp} XP avant « ${next.e} ${next.n} »</small>`:""}
+  </div>`;
+}
+function renderHome(){
+  let cards="";
+  CHAPTERS.forEach(c=>{
+    if(c.soon){
+      cards+=`<div class="card chap soon" data-soon="${c.id}"><div class="ic">${c.e}</div>
+        <div class="inf"><b>Ch.${c.num} · ${c.title}</b><small>${c.teaser}</small></div>
+        <span class="badge soon">🔒 à venir</span></div>`;
+    }else{
+      const a=chapterAgg(c);
+      const complete=a.done===a.n&&a.tpDone;
+      cards+=`<div class="card chap" data-ch="${c.id}"><div class="ic">${c.e}</div>
+        <div class="inf"><b>Ch.${c.num} · ${c.title}</b>
+        <small>${a.done}/${a.n} leçons réussies · ${a.good}/${a.total} bonnes réponses${a.tpDone?" · TP ✔":""}</small>
+        <div class="minibar"><i style="width:${Math.round(a.good/a.total*100)}%"></i></div></div>
+        <span class="badge ${complete?"done":"open"}">${complete?"✔ terminé":"ouvert"}</span></div>`;
+    }
+  });
+  app.innerHTML=header()+
+    `<div class="section-t">L'expédition</div>`+cards+
+    `<p style="color:var(--muted);font-size:13.5px;text-align:center;margin-top:18px">
+      Les prochains chapitres arriveront par mises à jour —<br>ta progression sera conservée grâce à ton code 💾.</p>`;
+  bindHeader();
+  document.querySelectorAll("[data-ch]").forEach(n=>n.onclick=()=>go("chapter",{ch:n.dataset.ch}));
+}
+function bindHeader(){
+  $("#p-rank").onclick=()=>go("ranks");
+  $("#p-save").onclick=openSaveModal;
+}
+function renderChapter(chId){
+  const c=CHAPTERS.find(x=>x.id===chId);
+  let rows="";
+  c.lessons.forEach((l,i)=>{
+    const unlocked=lessonUnlocked(c,i);
+    const st=stars(state.best[l.id],l.quiz.length);
+    rows+=`<div class="card lesson ${unlocked?"":"locked"}">
+      <div class="num">${c.num}.${i+1}</div>
+      <div class="inf"><b>${l.title}</b>
+        <span class="stars">${state.best[l.id]!=null?starStr(st)+" · "+state.best[l.id]+"/"+l.quiz.length:(unlocked?"non jouée":"🔒 réussis la leçon précédente")}</span></div>
+      <button class="info-btn" data-info="${i}">ℹ️</button>
+      ${unlocked?`<button class="btn sec" style="width:auto;margin:0;padding:10px 16px" data-play="${i}">${state.best[l.id]!=null?"Rejouer":"Jouer"}</button>`:""}
+    </div>`;
+  });
+  const tpOk=tpUnlocked(c);const tpB=state.tp[c.tp.id];
+  rows+=`<div class="section-t">Synthèse</div>
+    <div class="card lesson ${tpOk?"":"locked"}">
+      <div class="num">🏗️</div>
+      <div class="inf"><b>${c.tp.title.replace("TP — ","")}</b>
+        <span class="stars">${tpB!=null?tpB+"/"+c.tp.steps.length+" bons choix":(tpOk?"TP de synthèse — scénario MécaNova":"🔒 réussis toutes les leçons")}</span></div>
+      ${tpOk?`<button class="btn sec" style="width:auto;margin:0;padding:10px 16px" id="tp-play">${tpB!=null?"Rejouer":"Jouer"}</button>`:""}
+    </div>`;
+  app.innerHTML=`<button class="back" id="bk">← Accueil</button>
+    <h2 style="margin:6px 0 2px">${c.e} Chapitre ${c.num} — ${c.title}</h2>
+    <p style="color:var(--muted);font-size:14.5px;margin-top:4px">${c.teaser}</p>`+rows;
+  $("#bk").onclick=()=>history.back();
+  document.querySelectorAll("[data-play]").forEach(n=>n.onclick=()=>go("lesson",{ch:c.id,lesson:+n.dataset.play}));
+  document.querySelectorAll("[data-info]").forEach(n=>n.onclick=()=>openLessonInfo(c,+n.dataset.info));
+  const tpBtn=$("#tp-play");if(tpBtn)tpBtn.onclick=()=>go("tp",{ch:c.id});
+}
+function openLessonInfo(c,i){
+  const l=c.lessons[i];const unlocked=lessonUnlocked(c,i);
+  openModal(`<h3>${c.num}.${i+1} · ${l.title}</h3>
+    <p class="muted" style="margin:4px 0 10px">À la fin tu sauras :</p>
+    <ul class="obj-list">${l.obj.map(o=>`<li>${o}</li>`).join("")}</ul>
+    <p class="muted">${l.fiches.length} fiches + résumé · quiz de ${l.quiz.length} questions · jusqu'à ${lessonMaxXP(l)} XP</p>
+    ${unlocked?`<button class="btn" id="m-start">C'est parti 🦙</button>`:`<p class="muted">🔒 Réussis d'abord la leçon précédente (≥ ${passNeeded(l.quiz.length)}/${l.quiz.length}).</p>`}`);
+  const b=$("#m-start");if(b)b.onclick=()=>{closeModal();go("lesson",{ch:c.id,lesson:i});};
+}
+
+/* ---------- Leçon : fiches (swipe) puis quiz ---------- */
+function renderLesson(chId,li){
+  const c=CHAPTERS.find(x=>x.id===chId);const l=c.lessons[li];
+  const cards=l.fiches.map(f=>({t:f.t,h:f.h}))
+    .concat([{t:"📌 En résumé",h:"<ul>"+l.resume.map(r=>`<li>${r}</li>`).join("")+"</ul>"}]);
+  let idx=0;
+  function paint(dir){
+    const f=cards[idx];
+    app.innerHTML=`<button class="back" id="bk">← ${c.e} Chapitre ${c.num}</button>
+      <h2 style="margin:6px 0 0;font-size:19px">${c.num}.${li+1} · ${l.title}</h2>
+      <div class="fiche-wrap" id="fw">
+        <div class="fiche" id="fc"><h3>${f.t}</h3>${f.h}</div>
+      </div>
+      <div class="dots">${cards.map((_,k)=>`<i class="${k===idx?"on":""}"></i>`).join("")}</div>
+      <button class="btn" id="nx">${idx<cards.length-1?"Fiche suivante →":"Passer au quiz 🎯"}</button>
+      ${idx>0?`<button class="btn ghost" id="pv">← Fiche précédente</button>`:""}`;
+    $("#bk").onclick=()=>history.back();
+    const fc=$("#fc");
+    if(dir){fc.style.animation=`slide-${dir} .28s ease`;}
+    $("#nx").onclick=()=>{if(idx<cards.length-1){idx++;paint("l");}else startQuiz();};
+    const pv=$("#pv");if(pv)pv.onclick=()=>{idx--;paint("r");};
+    attachSwipe($("#fw"),fc,
+      ()=>{if(idx<cards.length-1){idx++;paint("l");}else startQuiz();},
+      ()=>{if(idx>0){idx--;paint("r");}});
+  }
+  function startQuiz(){runQuiz(c,l,li);}
+  paint();
+}
+const styleExtra=document.createElement("style");
+styleExtra.textContent=`@keyframes slide-l{from{transform:translateX(60px);opacity:.2}to{transform:none;opacity:1}}
+@keyframes slide-r{from{transform:translateX(-60px);opacity:.2}to{transform:none;opacity:1}}`;
+document.head.appendChild(styleExtra);
+
+function attachSwipe(wrap,card,onNext,onPrev){
+  let x0=null,dx=0,skip=false;
+  wrap.addEventListener("touchstart",e=>{
+    /* jamais de swipe si le geste démarre sur un élément scrollable — leçon PyQuest §4 */
+    skip=!!e.target.closest("pre,table,code");
+    x0=e.touches[0].clientX;dx=0;card.style.transition="none";
+  },{passive:true});
+  wrap.addEventListener("touchmove",e=>{
+    if(x0==null||skip)return;
+    dx=e.touches[0].clientX-x0;
+    card.style.transform=`translateX(${dx*0.85}px)`;card.style.opacity=String(Math.max(.4,1-Math.abs(dx)/420));
+  },{passive:true});
+  wrap.addEventListener("touchend",()=>{
+    if(x0==null||skip){x0=null;return;}
+    card.style.transition="transform .2s,opacity .2s";
+    if(dx<-70)onNext();else if(dx>70)onPrev();
+    else{card.style.transform="";card.style.opacity="";} /* retour élastique */
+    x0=null;
+  });
+}
+
+function runQuiz(c,l,li){
+  let qi=0,score=0;
+  function paintQ(){
+    const q=l.quiz[qi];
+    const opts=q.vf?q.opts:shuffle(q.opts); /* Fisher-Yates partagé ; V/F jamais mélangé */
+    app.innerHTML=`<button class="back" id="bk">← ${c.e} Chapitre ${c.num}</button>
+      <div class="qhead"><span>Question ${qi+1}/${l.quiz.length}</span><span class="qtype">${q.ty}</span></div>
+      <div class="qtext">${q.q}</div>
+      <div class="opts" id="opts">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${o.t}</button>`).join("")}</div>
+      <div id="fbz"></div>`;
+    $("#bk").onclick=()=>history.back();
+    document.querySelectorAll(".opt").forEach(btn=>{
+      btn.onclick=()=>{
+        const chosen=opts[+btn.dataset.k];const good=!!chosen.ok;
+        if(good)score++;
+        document.querySelectorAll(".opt").forEach((b2,k2)=>{
+          b2.disabled=true;
+          if(opts[k2].ok)b2.classList.add("ok");
+          else if(b2===btn)b2.classList.add("ko");
+          else b2.classList.add("dim");
+        });
+        $("#fbz").innerHTML=`<div class="fb ${good?"good":"bad"}"><b>${good?"✔ Bien vu !":"✘ Pas celle-là."}</b>💬 ${q.fb}</div>
+          <button class="btn" id="cont">${qi<l.quiz.length-1?"Question suivante →":"Voir le résultat 🏁"}</button>`;
+        $("#cont").onclick=()=>{if(qi<l.quiz.length-1){qi++;paintQ();}else finish();};
+      };
+    });
+  }
+  function finish(){
+    const n=l.quiz.length;
+    const prevBest=state.best[l.id];
+    const improved=prevBest==null||score>prevBest;
+    const before=totalXP();
+    if(improved){state.best[l.id]=score;save();}
+    const gained=totalXP()-before;
+    const st=stars(state.best[l.id],n);
+    const passed=score>=passNeeded(n);
+    app.innerHTML=`<div class="result">
+      <div class="big">${passed?(score===n?"🦙✨":"🦙"):"🦙💤"}</div>
+      <h2>${passed?(score===n?"Sans faute !":"Leçon réussie !"):"Presque…"}</h2>
+      <div class="stars">${starStr(st)||"☆☆☆"}</div>
+      <p>${score}/${n} bonnes réponses${prevBest!=null&&!improved?` · record : ${prevBest}/${n}`:""}</p>
+      <p class="xp">${gained>0?`+${gained} XP ⚡`:"Pas de nouveau record — l'XP reste acquis sur tes meilleurs scores"}</p>
+      ${passed?"":`<p style="color:var(--muted);font-size:14px">Il faut ${passNeeded(n)}/${n} pour débloquer la suite. Les fiches sont relisibles avant de retenter !</p>`}
+    </div>
+    <button class="btn" id="r1">${passed?"Continuer l'expédition →":"Relire les fiches"}</button>
+    <button class="btn ghost" id="r2">${passed?"Rejouer cette leçon":"Retenter le quiz"}</button>`;
+    $("#r1").onclick=()=>{if(passed)history.back();else go("lesson",{ch:c.id,lesson:li},true);};
+    $("#r2").onclick=()=>{if(passed)go("lesson",{ch:c.id,lesson:li},true);else{qi=0;score=0;paintQ();}};
+  }
+  paintQ();
+}
+
+/* ---------- TP ---------- */
+function renderTP(chId){
+  const c=CHAPTERS.find(x=>x.id===chId);const tp=c.tp;
+  let si=-1,correct=0;
+  function paintIntro(){
+    app.innerHTML=`<button class="back" id="bk">← ${c.e} Chapitre ${c.num}</button>
+      <h2 style="margin:6px 0 2px">🏗️ ${tp.title.replace("TP — ","")}</h2>
+      <div class="card" style="font-size:15.5px">${tp.intro}</div>
+      <button class="btn" id="go">Entrer en réunion 🎬</button>`;
+    $("#bk").onclick=()=>history.back();
+    $("#go").onclick=()=>{si=0;paintStep();};
+  }
+  function paintStep(){
+    const s=tp.steps[si];
+    const opts=shuffle(s.opts);
+    app.innerHTML=`<button class="back" id="bk">← ${c.e} Chapitre ${c.num}</button>
+      <div class="tp-step">${s.label} · ${si+1}/${tp.steps.length}</div>
+      <div class="qtext">${s.q}</div>
+      <div class="opts">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${o.t}</button>`).join("")}</div>
+      <div id="fbz"></div>`;
+    $("#bk").onclick=()=>history.back();
+    document.querySelectorAll(".opt").forEach(btn=>{
+      btn.onclick=()=>{
+        const chosen=opts[+btn.dataset.k];const good=!!chosen.ok;
+        if(good)correct++;
+        document.querySelectorAll(".opt").forEach((b2,k2)=>{
+          b2.disabled=true;
+          if(opts[k2].ok)b2.classList.add("ok");
+          else if(b2===btn)b2.classList.add("ko");
+          else b2.classList.add("dim");
+        });
+        $("#fbz").innerHTML=`<div class="fb ${good?"good":"bad"}"><b>${good?"✔ Le bon réflexe.":"✘ Pas le meilleur choix."}</b>💬 ${chosen.fb}${!good?`<br><br><i>Le bon choix : « ${s.opts.find(o=>o.ok).t} » — ${s.opts.find(o=>o.ok).fb}</i>`:""}</div>
+          <button class="btn" id="cont">${si<tp.steps.length-1?"Étape suivante →":"Conclure la mission 🏁"}</button>`;
+        $("#cont").onclick=()=>{if(si<tp.steps.length-1){si++;paintStep();}else finish();};
+      };
+    });
+  }
+  function finish(){
+    const n=tp.steps.length;
+    const prevBest=state.tp[tp.id];
+    const improved=prevBest==null||correct>prevBest;
+    const before=totalXP();
+    if(improved){state.tp[tp.id]=correct;save();}
+    const gained=totalXP()-before;
+    const agg=chapterAgg(c);const chapterDone=agg.done===agg.n;
+    app.innerHTML=`<div class="result">
+      <div class="big">${correct===n?"🦙🏆":"🦙"}</div>
+      <h2>${correct===n?"Mission parfaite !":"Mission accomplie"}</h2>
+      <p>${correct}/${n} bons choix face à MécaNova</p>
+      <p class="xp">${gained>0?`+${gained} XP ⚡`:"Record déjà atteint"}</p>
+    </div>
+    <div class="post-draft">${tp.post}</div>
+    ${chapterDone?`<div class="hint-export">💾 <b>Chapitre terminé — pense à ton code de sauvegarde !</b><br>
+      Un nettoyage du navigateur peut effacer ta progression locale. Exporte ton code maintenant, ça prend 5 secondes.
+      <button class="btn sec" id="exp" style="margin-top:10px">Exporter mon code</button></div>`:""}
+    <button class="btn" id="r1">Retour au chapitre</button>`;
+    const ex=$("#exp");if(ex)ex.onclick=openSaveModal;
+    $("#r1").onclick=()=>history.back();
+  }
+  paintIntro();
+}
+
+/* ---------- Frise des rangs ---------- */
+function renderRanks(){
+  const {r,idx,xp}=currentRank();
+  const maxAvail=maxAvailableXP();
+  let rows="";
+  RANKS.forEach((k,i)=>{
+    const here=i===idx;
+    const locked=k.t>maxAvail;
+    rows+=`<div class="rank-item ${here?"here":""} ${locked?"locked":""}">
+      <div class="re">${k.e}</div>
+      <div class="ri"><b>${k.n} ${here?'<span class="here-tag">◀ tu es ici</span>':""}</b>
+      <small>${k.d}</small>
+      <small>${k.t} XP${locked?" · 🔒 avec les prochains chapitres":(i>idx?` · encore ${k.t-xp} XP`:"")}</small></div>
+    </div>`;
+  });
+  app.innerHTML=`<button class="back" id="bk">← Accueil</button>
+    <h2 style="margin:6px 0 14px">L'ascension du lama</h2>${rows}
+    <p style="color:var(--muted);font-size:13px">La frise est calibrée sur l'expédition complète (8 chapitres). XP actuel : ${xp}.</p>`;
+  $("#bk").onclick=()=>history.back();
+}
+
+/* ---------- Modales & sauvegarde ---------- */
+function openModal(html){
+  closeModal();
+  const bg=el(`<div class="modal-bg" id="modal-bg"><div class="modal">${html}</div></div>`);
+  bg.addEventListener("click",e=>{if(e.target===bg)closeModal();});
+  document.body.appendChild(bg);
+}
+function closeModal(){const m=$("#modal-bg");if(m)m.remove();}
+function toast(msg){
+  const t=el(`<div class="toast">${msg}</div>`);document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2200);
+}
+function openSaveModal(){
+  openModal(`<h3>💾 Code de sauvegarde</h3>
+    <p class="muted">Copie ce code et garde-le (notes, mail…). Il restaure ta progression après un changement de téléphone, un nettoyage du navigateur ou une mise à jour de l'app.</p>
+    <textarea id="exp-code" readonly>${exportCode()}</textarea>
+    <button class="btn sec" id="copy">📋 Copier le code</button>
+    <h3 style="margin-top:20px">Importer un code</h3>
+    <textarea id="imp-code" placeholder="Colle ton code SHP1-… ici"></textarea>
+    <button class="btn" id="imp">Restaurer cette progression</button>`);
+  $("#copy").onclick=async()=>{
+    const c=$("#exp-code").value;
+    try{await navigator.clipboard.writeText(c);}catch(e){$("#exp-code").select();document.execCommand("copy");}
+    toast("Code copié ✔");
+  };
+  $("#imp").onclick=()=>{
+    const res=importCode($("#imp-code").value);
+    if(res.err){toast("⚠️ "+res.err);return;}
+    closeModal();toast("Progression restaurée 🦙");go("home",{},true);
+  };
+}
+
+/* ---------- Démarrage ---------- */
+if("serviceWorker" in navigator&&location.protocol!=="file:"){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+window.__SHERPIA={CHAPTERS,RANKS,get state(){return state;},exportCode,importCode,shuffle,totalXP,maxAvailableXP};
+go("home",{},true);
+</script>
+</body>
+</html>
