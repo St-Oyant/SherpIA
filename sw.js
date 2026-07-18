@@ -1,7 +1,7 @@
 /* SherpIA — service worker réseau-d'abord avec cache de secours.
    ⚠️ Incrémenter CACHE à CHAQUE version pour propager les mises à jour (leçon PyQuest §5). */
-const CACHE = "sherpia-v1.0.0";
-const CORE = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png"];
+const CACHE = "sherpia-v1.1.0";
+const CORE = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png", "icon-192-maskable.png", "icon-512-maskable.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));

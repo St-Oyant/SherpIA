@@ -49,20 +49,24 @@ button{font-family:inherit;}
 .chap.soon{opacity:.55;cursor:default;}
 .chap .minibar{height:5px;background:#383d74;border-radius:99px;margin-top:7px;overflow:hidden;}
 .chap .minibar i{display:block;height:100%;background:var(--accent);border-radius:99px;}
-.badge{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:99px;flex-shrink:0;}
-.badge.open{background:rgba(156,123,255,.2);color:var(--accent);}
-.badge.soon{background:rgba(91,94,134,.3);color:var(--lock);}
-.badge.done{background:rgba(76,175,125,.18);color:var(--ok);}
-.lesson{display:flex;gap:12px;align-items:center;}
-.lesson .num{width:40px;height:40px;border-radius:12px;background:var(--card2);display:flex;
-  align-items:center;justify-content:center;font-weight:800;color:var(--accent);flex-shrink:0;font-size:15px;}
+.chev{font-size:24px;color:var(--accent);flex-shrink:0;line-height:1;font-weight:400;}
+.chev.done{color:var(--ok);font-size:15px;font-weight:800;letter-spacing:1px;}
+.lock-ic{font-size:16px;flex-shrink:0;opacity:.6;}
+.chap{cursor:pointer;}
+.card.lesson[data-play],.card.lesson[data-tp]{cursor:pointer;}
+.card.lesson[data-play]:active,.card.lesson[data-tp]:active,.chap:not(.soon):active{transform:scale(.98);}
+.lesson{display:flex;gap:12px;align-items:center;transition:transform .12s;}
+.lesson .num{width:38px;height:38px;border-radius:12px;background:var(--card2);display:flex;
+  align-items:center;justify-content:center;font-weight:800;color:var(--accent);flex-shrink:0;font-size:14.5px;}
 .lesson.locked .num{color:var(--lock);}
 .lesson.locked{opacity:.55;}
 .lesson .inf{flex:1;min-width:0;}
 .lesson .inf b{font-size:15.5px;display:block;}
 .lesson .stars{color:var(--gold);font-size:13.5px;letter-spacing:1px;}
-.lesson .info-btn{background:var(--card2);border:none;color:var(--cyan);width:34px;height:34px;
-  border-radius:99px;font-size:16px;cursor:pointer;flex-shrink:0;}
+.lesson .info-btn{background:none;border:1.5px solid rgba(165,163,200,.45);color:var(--muted);width:26px;height:26px;
+  border-radius:99px;font-size:13px;font-weight:700;font-style:italic;font-family:Georgia,"Times New Roman",serif;
+  cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
+.lesson .info-btn:active{border-color:var(--cyan);color:var(--cyan);}
 .btn{display:block;width:100%;background:linear-gradient(120deg,var(--accent2),#9430c9);color:#fff;
   border:none;border-radius:14px;padding:15px;font-size:16.5px;font-weight:700;cursor:pointer;
   margin-top:14px;box-shadow:0 4px 14px rgba(124,77,255,.35);transition:transform .1s;}
@@ -91,14 +95,17 @@ button{font-family:inherit;}
 .qtype{color:var(--cyan);}
 .qtext{background:var(--card);border-radius:16px;padding:16px 17px;font-size:16.5px;font-weight:600;
   border:1px solid rgba(255,255,255,.07);}
-.opts{margin-top:12px;}
-.opt{display:block;width:100%;text-align:left;background:var(--card);color:var(--txt);
-  border:1.5px solid var(--card2);border-radius:14px;padding:13px 15px;font-size:15.5px;
-  margin-bottom:9px;cursor:pointer;transition:border-color .15s;}
-.opt:active{border-color:var(--accent);}
-.opt.ok{border-color:var(--ok);background:rgba(76,175,125,.13);}
-.opt.ko{border-color:var(--ko);background:rgba(224,92,110,.12);}
-.opt.dim{opacity:.5;}
+.opts-card{margin-top:12px;background:var(--card);border-radius:16px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.07);}
+.opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;color:var(--txt);
+  border:none;border-bottom:1px solid rgba(255,255,255,.07);padding:14px 16px;font-size:15.5px;
+  cursor:pointer;transition:background-color .15s;}
+.opts-card .opt:last-child{border-bottom:none;}
+.opt:active{background:rgba(255,255,255,.05);}
+.opt.ok{background:rgba(76,175,125,.16);color:#eafff1;}
+.opt.ko{background:rgba(224,92,110,.15);}
+.opt.dim{opacity:.45;}
+.opt .vf-ico{font-size:16px;flex-shrink:0;}
 .fb{border-radius:14px;padding:13px 15px;font-size:14.5px;margin-top:4px;animation:pop .25s;}
 .fb.good{background:rgba(76,175,125,.13);border:1px solid rgba(76,175,125,.4);}
 .fb.bad{background:rgba(224,92,110,.12);border:1px solid rgba(224,92,110,.4);}
@@ -251,7 +258,7 @@ const CHAPTERS=[
     {ty:"🐛 Repère l'erreur",q:"Vidéo promo : « Notre IA a analysé 3 schémas électriques sans erreur : la relecture humaine de vos plans, c'est terminé. » Le raisonnement fautif ?",opts:[{t:"Généraliser de 3 exemples réussis à une fiabilité de production, sur un usage critique",ok:true},{t:"Les schémas électriques ne sont pas analysables par l'IA"},{t:"Le problème est l'absence de brevet sur la méthode"},{t:"Rien : 3 succès suffisent à prouver la fiabilité"}],fb:"Trois succès choisis ne sont pas un taux d'erreur. Et « supprimer la relecture humaine » sur un livrable critique cumule les deux drapeaux rouges du chapitre : sur-généralisation + suppression du garde-fou."},
     {ty:"Texte à trou",q:"En IA, un type de média (texte, image, audio, vidéo) s'appelle une ___.",opts:[{t:"modalité",ok:true},{t:"fréquence"},{t:"interface"},{t:"extension"}],fb:"D'où « multimodal ». Petit mot à placer correctement en réunion — vocabulaire minimal du sujet, comme token et paramètre."}]}
  ],
- tp:{id:"tp3",title:"TP — « Un ChatGPT interne pour MécaNova »",
+ tp:{id:"tp3",title:"Un ChatGPT interne pour MécaNova",
   intro:"Karim, DSI de MécaNova (équipementier auto, 800 personnes, 3DEXPERIENCE), t'appelle : « La direction me met la pression : tout le monde a un ChatGPT interne sauf nous. Il me faut ça pour la rentrée. Tu m'aides à cadrer ? »<br><br>Tu joues ton futur rôle : le consultant de confiance. À chaque étape, choisis ta réponse.",
   steps:[
    {label:"Étape 1 — La première question",q:"Que demandes-tu en premier à Karim ?",opts:[
@@ -388,15 +395,14 @@ function renderHome(){
     if(c.soon){
       cards+=`<div class="card chap soon" data-soon="${c.id}"><div class="ic">${c.e}</div>
         <div class="inf"><b>Ch.${c.num} · ${c.title}</b><small>${c.teaser}</small></div>
-        <span class="badge soon">🔒 à venir</span></div>`;
+        <span class="lock-ic">🔒</span></div>`;
     }else{
       const a=chapterAgg(c);
-      const complete=a.done===a.n&&a.tpDone;
       cards+=`<div class="card chap" data-ch="${c.id}"><div class="ic">${c.e}</div>
         <div class="inf"><b>Ch.${c.num} · ${c.title}</b>
         <small>${a.done}/${a.n} leçons réussies · ${a.good}/${a.total} bonnes réponses${a.tpDone?" · TP ✔":""}</small>
         <div class="minibar"><i style="width:${Math.round(a.good/a.total*100)}%"></i></div></div>
-        <span class="badge ${complete?"done":"open"}">${complete?"✔ terminé":"ouvert"}</span></div>`;
+        <span class="chev">›</span></div>`;
     }
   });
   app.innerHTML=header()+
@@ -416,33 +422,33 @@ function renderChapter(chId){
   c.lessons.forEach((l,i)=>{
     const unlocked=lessonUnlocked(c,i);
     const st=stars(state.best[l.id],l.quiz.length);
-    rows+=`<div class="card lesson ${unlocked?"":"locked"}">
-      <div class="num">${c.num}.${i+1}</div>
-      <div class="inf"><b>${l.title}</b>
+    rows+=`<div class="card lesson ${unlocked?"":"locked"}" ${unlocked?`data-play="${i}"`:""}>
+      <div class="num">${i+1}</div>
+      <div class="inf"><b>Leçon ${i+1} - ${l.title}</b>
         <span class="stars">${state.best[l.id]!=null?starStr(st)+" · "+state.best[l.id]+"/"+l.quiz.length:(unlocked?"non jouée":"🔒 réussis la leçon précédente")}</span></div>
-      <button class="info-btn" data-info="${i}">ℹ️</button>
-      ${unlocked?`<button class="btn sec" style="width:auto;margin:0;padding:10px 16px" data-play="${i}">${state.best[l.id]!=null?"Rejouer":"Jouer"}</button>`:""}
+      <button class="info-btn" data-info="${i}">i</button>
+      ${unlocked?'<span class="chev">›</span>':'<span class="lock-ic">🔒</span>'}
     </div>`;
   });
   const tpOk=tpUnlocked(c);const tpB=state.tp[c.tp.id];
   rows+=`<div class="section-t">Synthèse</div>
-    <div class="card lesson ${tpOk?"":"locked"}">
+    <div class="card lesson ${tpOk?"":"locked"}" ${tpOk?`data-tp="1"`:""}>
       <div class="num">🏗️</div>
-      <div class="inf"><b>${c.tp.title.replace("TP — ","")}</b>
-        <span class="stars">${tpB!=null?tpB+"/"+c.tp.steps.length+" bons choix":(tpOk?"TP de synthèse — scénario MécaNova":"🔒 réussis toutes les leçons")}</span></div>
-      ${tpOk?`<button class="btn sec" style="width:auto;margin:0;padding:10px 16px" id="tp-play">${tpB!=null?"Rejouer":"Jouer"}</button>`:""}
+      <div class="inf"><b>Synthèse - ${c.tp.title}</b>
+        <span class="stars">${tpB!=null?tpB+"/"+c.tp.steps.length+" bons choix":(tpOk?"Scénario MécaNova":"🔒 réussis toutes les leçons")}</span></div>
+      ${tpOk?'<span class="chev">›</span>':'<span class="lock-ic">🔒</span>'}
     </div>`;
   app.innerHTML=`<button class="back" id="bk">← Accueil</button>
     <h2 style="margin:6px 0 2px">${c.e} Chapitre ${c.num} — ${c.title}</h2>
     <p style="color:var(--muted);font-size:14.5px;margin-top:4px">${c.teaser}</p>`+rows;
   $("#bk").onclick=()=>history.back();
   document.querySelectorAll("[data-play]").forEach(n=>n.onclick=()=>go("lesson",{ch:c.id,lesson:+n.dataset.play}));
-  document.querySelectorAll("[data-info]").forEach(n=>n.onclick=()=>openLessonInfo(c,+n.dataset.info));
-  const tpBtn=$("#tp-play");if(tpBtn)tpBtn.onclick=()=>go("tp",{ch:c.id});
+  document.querySelectorAll("[data-info]").forEach(n=>n.onclick=(e)=>{e.stopPropagation();openLessonInfo(c,+n.dataset.info);});
+  const tpRow=$("[data-tp]");if(tpRow)tpRow.onclick=()=>go("tp",{ch:c.id});
 }
 function openLessonInfo(c,i){
   const l=c.lessons[i];const unlocked=lessonUnlocked(c,i);
-  openModal(`<h3>${c.num}.${i+1} · ${l.title}</h3>
+  openModal(`<h3>Leçon ${i+1} - ${l.title}</h3>
     <p class="muted" style="margin:4px 0 10px">À la fin tu sauras :</p>
     <ul class="obj-list">${l.obj.map(o=>`<li>${o}</li>`).join("")}</ul>
     <p class="muted">${l.fiches.length} fiches + résumé · quiz de ${l.quiz.length} questions · jusqu'à ${lessonMaxXP(l)} XP</p>
@@ -459,18 +465,16 @@ function renderLesson(chId,li){
   function paint(dir){
     const f=cards[idx];
     app.innerHTML=`<button class="back" id="bk">← ${c.e} Chapitre ${c.num}</button>
-      <h2 style="margin:6px 0 0;font-size:19px">${c.num}.${li+1} · ${l.title}</h2>
+      <h2 style="margin:6px 0 0;font-size:19px">Leçon ${li+1} - ${l.title}</h2>
       <div class="fiche-wrap" id="fw">
         <div class="fiche" id="fc"><h3>${f.t}</h3>${f.h}</div>
       </div>
       <div class="dots">${cards.map((_,k)=>`<i class="${k===idx?"on":""}"></i>`).join("")}</div>
-      <button class="btn" id="nx">${idx<cards.length-1?"Fiche suivante →":"Passer au quiz 🎯"}</button>
-      ${idx>0?`<button class="btn ghost" id="pv">← Fiche précédente</button>`:""}`;
+      <button class="btn" id="nx">${idx<cards.length-1?"Fiche suivante →":"Passer au quiz 🎯"}</button>`;
     $("#bk").onclick=()=>history.back();
     const fc=$("#fc");
     if(dir){fc.style.animation=`slide-${dir} .28s ease`;}
     $("#nx").onclick=()=>{if(idx<cards.length-1){idx++;paint("l");}else startQuiz();};
-    const pv=$("#pv");if(pv)pv.onclick=()=>{idx--;paint("r");};
     attachSwipe($("#fw"),fc,
       ()=>{if(idx<cards.length-1){idx++;paint("l");}else startQuiz();},
       ()=>{if(idx>0){idx--;paint("r");}});
@@ -504,6 +508,13 @@ function attachSwipe(wrap,card,onNext,onPrev){
   });
 }
 
+function vfIcon(q,o){
+  if(!q.vf)return "";
+  const t=o.t.trim();
+  if(t==="Vrai")return '<span class="vf-ico">✅</span>';
+  if(t==="Faux")return '<span class="vf-ico">❌</span>';
+  return "";
+}
 function runQuiz(c,l,li){
   let qi=0,score=0;
   function paintQ(){
@@ -512,7 +523,7 @@ function runQuiz(c,l,li){
     app.innerHTML=`<button class="back" id="bk">← ${c.e} Chapitre ${c.num}</button>
       <div class="qhead"><span>Question ${qi+1}/${l.quiz.length}</span><span class="qtype">${q.ty}</span></div>
       <div class="qtext">${q.q}</div>
-      <div class="opts" id="opts">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${o.t}</button>`).join("")}</div>
+      <div class="opts-card" id="opts">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${vfIcon(q,o)}<span>${o.t}</span></button>`).join("")}</div>
       <div id="fbz"></div>`;
     $("#bk").onclick=()=>history.back();
     document.querySelectorAll(".opt").forEach(btn=>{
@@ -562,7 +573,7 @@ function renderTP(chId){
   let si=-1,correct=0;
   function paintIntro(){
     app.innerHTML=`<button class="back" id="bk">← ${c.e} Chapitre ${c.num}</button>
-      <h2 style="margin:6px 0 2px">🏗️ ${tp.title.replace("TP — ","")}</h2>
+      <h2 style="margin:6px 0 2px">🏗️ Synthèse - ${tp.title}</h2>
       <div class="card" style="font-size:15.5px">${tp.intro}</div>
       <button class="btn" id="go">Entrer en réunion 🎬</button>`;
     $("#bk").onclick=()=>history.back();
@@ -574,7 +585,7 @@ function renderTP(chId){
     app.innerHTML=`<button class="back" id="bk">← ${c.e} Chapitre ${c.num}</button>
       <div class="tp-step">${s.label} · ${si+1}/${tp.steps.length}</div>
       <div class="qtext">${s.q}</div>
-      <div class="opts">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${o.t}</button>`).join("")}</div>
+      <div class="opts-card">${opts.map((o,k)=>`<button class="opt" data-k="${k}"><span>${o.t}</span></button>`).join("")}</div>
       <div id="fbz"></div>`;
     $("#bk").onclick=()=>history.back();
     document.querySelectorAll(".opt").forEach(btn=>{

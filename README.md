@@ -4,11 +4,21 @@ App d'apprentissage de l'IA (chapitre pilote : Ch.3 « La révolution générati
 
 ## Déployer sur GitHub Pages (comme PyQuest / Cortex)
 
-1. Dans ton repo GitHub (ex. `sherpia`), uploade les **5 fichiers** :
-   `index.html`, `manifest.json`, `sw.js`, `icon-192.png`, `icon-512.png`
+1. Dans ton repo GitHub (ex. `sherpia`), uploade les **7 fichiers** :
+   `index.html`, `manifest.json`, `sw.js`,
+   `icon-192.png`, `icon-512.png`, `icon-192-maskable.png`, `icon-512-maskable.png`
 2. Settings → Pages → déploiement depuis la branche `main` (dossier racine).
 3. Ouvre l'URL `https://<ton-user>.github.io/sherpia/` sur ton téléphone.
 4. Chrome Android → menu ⋮ → **« Installer l'application »**.
+
+⚠️ Si tu avais déjà installé la v1.0 : désinstalle le raccourci existant avant
+de réinstaller, sinon Android garde l'ancienne icône en cache (le cercle blanc).
+
+### Pourquoi il y a 4 icônes
+Android génère lui-même un cercle blanc autour d'une icône si l'app ne fournit
+pas d'icône « maskable » (pensée pour être détourée). Les fichiers `-maskable`
+ont le lama recentré avec la marge de sécurité qu'Android exige — c'est ce qui
+corrige le rendu en raccourci.
 
 ## Mises à jour (prochains chapitres)
 
